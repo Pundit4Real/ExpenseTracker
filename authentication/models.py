@@ -1,5 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,PermissionsMixin
+from django.contrib.auth.models import (AbstractBaseUser, 
+                                        BaseUserManager,PermissionsMixin,Permission,Group)
 
 
 # Create your models here.
@@ -34,23 +35,35 @@ class UserManger(BaseUserManager):
         return user
     
 class User(AbstractBaseUser, PermissionsMixin):
-    username= models.CharField(max_legnth=255,unique=True, db_index=True)
-    email= models.EmailField(max_legnth=255,unique=True, db_index=True)
+    username= models.CharField(max_length=255, unique=True, db_index=True)
+    email= models.EmailField(max_length=255, unique=True, db_index=True)
     is_verified=models.BooleanField(default=False)
     is_active=models.BooleanField(default=True)
     is_staff=models.BooleanField(default=False)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
 
-
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
     objects=UserManger()
+
+    # Add related_name arguments to resolve clashes
+    groups = models.ManyToManyField(
+        Group,
+        verbose_name='groups',
+        blank=True,
+        related_name='custom_user_groups'
+    )
+    user_permissions = models.ManyToManyField(
+        Permission,
+        verbose_name='user permissions',
+        blank=True,
+        related_name='custom_user_permissions'
+    )
 
     def __str__(self):
         return self.email
     
     def tokens(self):
         return ''
-
