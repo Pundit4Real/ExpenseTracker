@@ -1,12 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import (AbstractBaseUser, 
                                         BaseUserManager,PermissionsMixin,Permission,Group)
+from rest_framework_simplejwt.tokens import RefreshToken
+
 
 
 # Create your models here.
 
 
-class UserManger(BaseUserManager):
+class UserManager(BaseUserManager):
 
     def create_user(self,username,email,password=None):
 
@@ -46,24 +48,25 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
-    objects=UserManger()
+    objects = UserManager()
 
     # Add related_name arguments to resolve clashes
-    groups = models.ManyToManyField(
-        Group,
-        verbose_name='groups',
-        blank=True,
-        related_name='custom_user_groups'
-    )
-    user_permissions = models.ManyToManyField(
-        Permission,
-        verbose_name='user permissions',
-        blank=True,
-        related_name='custom_user_permissions'
-    )
+    # groups = models.ManyToManyField(
+    #     Group,
+    #     verbose_name='groups',
+    #     blank=True,
+    #     related_name='custom_user_groups'
+    # )
+    # user_permissions = models.ManyToManyField(
+    #     Permission,
+    #     verbose_name='user permissions',
+    #     blank=True,
+    #     related_name='custom_user_permissions'
+    # )
 
     def __str__(self):
         return self.email
     
     def tokens(self):
         return ''
+        
